@@ -2,7 +2,7 @@
 author: Srikanth K S (aka talegari)  
 https://github.com/talegari/analyzing-tagged-data
 
-----
+
 
 > *This README document serves as documentation, manual and examples set for the project. It is kept simple and terse. You are encouraged to explore, improve upon, distribute and do anything you would like to do with it ... but with proper attribution. See the license heading below for more details.*
 
@@ -14,7 +14,7 @@ We intend to explore the data with tags.
 
 Here is an example of tagged data.
 
-----
+
 
 | MS Word | Libreoffice Writer | abiword | notepad++ |
 |:---------:|:--------------------:|:---------:|:-----------:|
@@ -22,7 +22,7 @@ Here is an example of tagged data.
 | docx    | odt                | abw     | txt       |
 | all     | all                |         | limited   | |
 
-----
+
 
 
 * There are four objects: **MS Word**, **Libreoffice Writer**, **abiword**, **notepad++**
@@ -57,7 +57,7 @@ input format: csv
 
 For example, see 'taggeddataset.csv' in the repository. We create a R object of the input dataset as follows:
 
-> <code>inputdata <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")</code>
+<code>inputdata <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")</code>
 
 ----
 
@@ -83,7 +83,7 @@ Please make sure you place the repository in the R's working directory or set th
 
 * There are four functions.
 
-----
+
 
 |   Function  |                     task                     |
 |:-----------:|:--------------------------------------------:|
@@ -92,7 +92,7 @@ Please make sure you place the repository in the R's working directory or set th
 | otrecommend | ... recommends tags based on visited objects     |
 | torecommend | ... recommends objects based on visited tags     |
 
-----
+
 
 * The syntax of the functions are similar. They take the inputdata as the first argument and visited character vector as the second argument. They return a dataframe. For example:
 
@@ -102,9 +102,7 @@ source('~/vis_tag_data/vistagdata.R')
 View(oorecommend(inputdata,visited=c("bear","monkey")))
 </code>
 
-> gives the following output
-
-----
+gives the following output
 
 |   |  object  | percentageMatch |
 |---|:--------:|:---------------:|
@@ -123,15 +121,15 @@ View(oorecommend(inputdata,visited=c("bear","monkey")))
 * These visualizations are generated:
 
     1. Visualizing objects versus tags
-2. Visualizing tags versus versus
-3. Hierarchical object clustering (a dendogram)
-4. Hierarchical tag clustering (a dendogram)
-5. Heatmap of objectwise hierarchial clustering
-6. Heatmap of tagwise hierarchial clustering
-7. Clusters among objects (using kmeans)
-8. Clusters among tags (using kmeans)
-9. Number of tags shared by objects
-10. Number of objects shared by tags
+    2. Visualizing tags versus versus
+    3. Hierarchical object clustering (a dendogram)
+    4. Hierarchical tag clustering (a dendogram)
+    5. Heatmap of objectwise hierarchial clustering
+    6. Heatmap of tagwise hierarchial clustering
+    7. Clusters among objects (using kmeans)
+    8. Clusters among tags (using kmeans)
+    9. Number of tags shared by objects
+    10. Number of objects shared by tags
 
 * 7th and 8th visualizations above use kmeans algorithm that requires the input of number of clusters. We currently employ a crude estimate for this, please try different values and decide the best number.
 
