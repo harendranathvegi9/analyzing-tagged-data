@@ -1,0 +1,8 @@
+cat,dog,monkey,bear,fish,tiger,elephant
+smooth,hard,hard,hard,smooth,hard,hard
+light,heavy,light,heavy,light,heavy,heavy
+claw,domestic,natural,natural,domestic,claw,friendly
+domestic,nocturnal,day,day,,natural,danger
+nocturnal,danger,notfriendly,danger,,nocturnal,natural
+notfriendly,friendly,,notfriendly,,notfriendly,
+,,,,,danger,

@@ -1,0 +1,178 @@
+---
+output: html_document
+---
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo=T, warning=FALSE, message=T)
+```
+
+# Visualization of tagged data
+
+The report contains the following visualizations.
+
+1. Visualizing objects versus tags
+2. Visualizing tags versus versus
+3. Hierarchical object clustering (a dendogram)
+4. Hierarchical tag clustering (a dendogram)
+5. Heatmap of objectwise hierarchial clustering
+6. Heatmap of tagwise hierarchial clustering
+7. Clusters among objects (using kmeans)
+8. Clusters among tags (using kmeans)
+9. Number of tags shared by objects
+10. Number of objects shared by tags
+
+----
+
+The objects are:
+```{r}
+source('~/vis_tag_data/vistagdata.R')
+a <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
+objects <- levels(longdat(a)[,1])
+objects
+```
+
+The tags are:
+```{r}
+source('~/vis_tag_data/vistagdata.R')
+a <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
+tags <- levels(longdat(a)[,2])
+tags <- subset(tags,tags!="")
+tags
+```
+
+\newpage
+
+## Visualizing objects versus tags
+
+----
+
+```{r}
+suppressMessages(require(ggplot2))
+source('~/vis_tag_data/vistagdata.R')
+a <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
+qplot(object,fill=tag,data=longdat(a),xlab="",ylab="")
+```
+
+\newpage
+
+## Visualizing tags versus objects
+
+----
+
+```{r}
+suppressMessages(require(ggplot2))
+source('~/vis_tag_data/vistagdata.R')
+a <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
+qplot(tag,fill=object,data=longdat(a,toclassify="tag"),xlab="",ylab="")
+```
+
+\newpage
+
+## Hierarchical object clustering
+
+----
+
+
+```{r}
+suppressMessages(require(dplyr))
+source('~/vis_tag_data/vistagdata.R')
+a <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
+a %>% longdat %>% incdat %>% hcluster
+```
+
+\newpage
+
+## Hierarchical tag clustering
+
+----
+
+
+```{r}
+suppressMessages(require(dplyr))
+source('~/vis_tag_data/vistagdata.R')
+a <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
+hcluster(incdat(longdat(a),toclassify="tag"))
+```
+
+\newpage
+
+## Heatmap of objectwise hierarchial clustering
+
+----
+
+
+```{r}
+suppressMessages(require(dplyr))
+source('~/vis_tag_data/vistagdata.R')
+a <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
+a %>% longdat %>% incdat %>% hclusterhm
+```
+
+\newpage
+
+## Heatmap of tagwise hierarchial clustering
+
+----
+
+
+```{r}
+suppressMessages(require(dplyr))
+source('~/vis_tag_data/vistagdata.R')
+a <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
+hclusterhm(incdat(longdat(a),toclassify="tag"))
+```
+
+\newpage
+
+## Clusters among objects (using kmeans)
+
+----
+
+```{r}
+suppressMessages(require(ggplot2))
+source('~/vis_tag_data/vistagdata.R')
+a <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
+ko <- kmcluster(incdat(longdat(a)))
+qplot(names(ko$cluster),fill=ko$cluster,xlab="",ylab="")
+
+message("The clusters are:")
+print(split(names(ko$cluster),ko$cluster))
+```
+
+\newpage
+
+## Clusters among tags (using kmeans)
+
+----
+
+```{r}
+suppressMessages(require(ggplot2))
+source('~/vis_tag_data/vistagdata.R')
+a <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
+ko <- kmcluster(incdat(longdat(a),toclassify="tag"))
+qplot(names(ko$cluster),fill=ko$cluster,xlab="",ylab="")
+
+message("The clusters are:")
+print(split(names(ko$cluster),ko$cluster))
+```
+
+\newpage
+
+## Number of tags shared by objects
+
+----
+
+```{r}
+heatmap(sharedtable(incdat(longdat(a))))
+print(sharedtable(incdat(longdat(a))))
+```
+
+\newpage
+
+## Number of objects shared by tags
+
+----
+
+```{r}
+heatmap(sharedtable(incdat(longdat(a),toclassify="tag")))
+print(sharedtable(incdat(longdat(a),toclassify="tag")))
+```
