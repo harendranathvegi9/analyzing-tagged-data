@@ -1,3 +1,13 @@
+# to get/load necessary packages
+pkgTest <- function(x)
+{
+  if (!require(x,character.only = TRUE))
+  {
+    install.packages(x,dep=TRUE)
+    if(!require(x,character.only = TRUE)) stop("Package not found")
+  }
+}
+
 longdat <- function(dat,toclassify="object")
   { library(reshape2)
     # to return a df with object, tag and a value(1) column

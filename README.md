@@ -1,10 +1,6 @@
-# Tagged data project
-author: Srikanth K S (aka talegari)  
-https://github.com/talegari/analyzing-tagged-data
-
-
-
-> *This README document serves as documentation, manual and examples set for the project. It is kept simple and terse. You are encouraged to explore, improve upon, distribute and do anything you would like to do with it ... but with proper attribution. See the license heading below for more details.*
+# Analyzing tagged data
+**Author**: Srikanth K S (aka talegari)  
+**Repository**: https://github.com/talegari/analyzing-tagged-data
 
 ----
 
@@ -37,11 +33,26 @@ We provide,
 
 ----
 
+## Usage
+
+Please place the repository(named `vis_tag_data`) in the R's working directory or set the working directory with `setwd()` appropriately.
+
+----
+
 ## Requirements
 
 The code is written in **R**, statistical programming language (R version 3.2.0). Apart from *base* R, we make use of the following packages:
 
 *dplyr*,*reshape2*, *ggplot2*, *knitr*
+
+If you need to check or install any of the packages, you are suggested to run the following.
+
+
+`source("~/vis_tag_data/vistagdata.R")`
+
+`lapply(c("dplyr","reshape2","ggplot2","knitr"),pkgTest)`
+
+If run for the first time, the previous command might take some minutes. Please be patient.
 
 For pdf generation on linux based systems, you might require *pandoc*.
 
@@ -49,7 +60,7 @@ For pdf generation on linux based systems, you might require *pandoc*.
 
 ## Format of input data
 
-input format: csv
+Data input format: **csv**
 
 * The first line is considered as the set of objects
 * The corresponding columns are considered as their tags.
@@ -65,21 +76,19 @@ For example, see 'taggeddataset.csv' in the repository. We create a R object of 
 
 * **vistagdata.R** -- the code used for recommender system and visualization. You will have to source it to run the recommender system functions.
 
-* **output.Rmd** -- code used to generate the html or pdf with th visualizations. This will be processed by *knitr*.
+* **output.Rmd** -- code used to generate the html or pdf with the visualizations. This will be processed by *knitr*.
 
-* **taggeddataset.csv** -- the example dataset. The *output.Rmd* uses this name all through. Is suggested to name your own dataset as *taggeddataset.csv*.
+* **taggeddataset.csv** -- the example dataset. The *output.Rmd* uses this name all through. Hence it suggested to name your own dataset as *taggeddataset.csv*.
 
-You are provided with *output.pdf*, *output.html* which are outputs of the *output.Rmd* on the trial dataset.
+Repository contains *output.pdf*, *output.html* which are outputs of the *output.Rmd* on the trial dataset.
 
 ----
 
-## Usage
-
-Please make sure you place the repository in the R's working directory or set the working directory with setwd() appropriately.
-
 ### Recommender system
 
-* Source the **vistagdata.R** using the source() command. For example: <pre><code>source('~/vis_tag_data/vistagdata.R')</code></pre>
+* Source the **vistagdata.R** using the source() command. For example:
+
+`source('~/vis_tag_data/vistagdata.R')`
 
 * There are four functions.
 
@@ -88,19 +97,19 @@ Please make sure you place the repository in the R's working directory or set th
 |   Function  |                     task                     |
 |:-----------:|:--------------------------------------------:|
 | oorecommend | ... recommends  objects based on visited objects |
-| ttrecommend | ... recommends tags based on visited tags        |
-| otrecommend | ... recommends tags based on visited objects     |
-| torecommend | ... recommends objects based on visited tags     |
-
+| ttrecommend | ... recommends tags based on visited tags |
+| otrecommend | ... recommends tags based on visited objects |
+| torecommend | ... recommends objects based on visited tags |
 
 
 * The syntax of the functions are similar. They take the inputdata as the first argument and visited character vector as the second argument. They return a dataframe. For example:
 
-> <code>
-inputdata <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")
-source('~/vis_tag_data/vistagdata.R')
-View(oorecommend(inputdata,visited=c("bear","monkey")))
-</code>
+`inputdata <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")`
+
+`source('~/vis_tag_data/vistagdata.R')`
+
+`View(oorecommend(inputdata,visited=c("bear","monkey")))`
+
 
 gives the following output
 
@@ -121,11 +130,11 @@ gives the following output
 * These visualizations are generated:
 
     1. Visualizing objects versus tags
-    2. Visualizing tags versus versus
+    2. Visualizing tags versus objects
     3. Hierarchical object clustering (a dendogram)
     4. Hierarchical tag clustering (a dendogram)
-    5. Heatmap of objectwise hierarchial clustering
-    6. Heatmap of tagwise hierarchial clustering
+    5. Heatmap of objectwise hierarchical clustering
+    6. Heatmap of tagwise hierarchical clustering
     7. Clusters among objects (using kmeans)
     8. Clusters among tags (using kmeans)
     9. Number of tags shared by objects
@@ -142,5 +151,3 @@ gives the following output
 Coming soon!
 
 ----
-
-

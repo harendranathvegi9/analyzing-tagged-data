@@ -1,8 +1,8 @@
 ---
-output: html_document
+output: pdf_document
 ---
 ```{r global_options, include=FALSE}
-knitr::opts_chunk$set(echo=T, warning=FALSE, message=T)
+knitr::opts_chunk$set(echo=F, warning=FALSE, message=T)
 ```
 
 # Visualization of tagged data
@@ -10,11 +10,11 @@ knitr::opts_chunk$set(echo=T, warning=FALSE, message=T)
 The report contains the following visualizations.
 
 1. Visualizing objects versus tags
-2. Visualizing tags versus versus
+2. Visualizing tags versus objects
 3. Hierarchical object clustering (a dendogram)
 4. Hierarchical tag clustering (a dendogram)
-5. Heatmap of objectwise hierarchial clustering
-6. Heatmap of tagwise hierarchial clustering
+5. Heatmap of objectwise hierarchical clustering
+6. Heatmap of tagwise hierarchical clustering
 7. Clusters among objects (using kmeans)
 8. Clusters among tags (using kmeans)
 9. Number of tags shared by objects
@@ -176,3 +176,9 @@ print(sharedtable(incdat(longdat(a))))
 heatmap(sharedtable(incdat(longdat(a),toclassify="tag")))
 print(sharedtable(incdat(longdat(a),toclassify="tag")))
 ```
+
+----
+
+The document with visualizations was generated using the code from the project **Analyzing tagged data** (https://github.com/talegari/analyzing-tagged-data)
+
+----
