@@ -1,6 +1,7 @@
 # Analyzing tagged data
-**Author**: Srikanth K S (aka talegari)  
-**Repository**: https://github.com/talegari/analyzing-tagged-data
+**Author**: Srikanth K S (talegari)  
+**email**: gmail sri.teach   
+**Repository**: [https://github.com/talegari/analyzing-tagged-data](https://github.com/talegari/analyzing-tagged-data)
 
 ----
 
@@ -27,34 +28,35 @@ Here is an example of tagged data.
 
 We provide,
 
-* A *tiny* recommender system to suggest objects or tags based on set of *visited* objects or tags. (*tiny* in sense, we do not do anything fancy)
+* A recommender system to suggest objects or tags based on set of *visited* objects or tags.
 
-* A report of different visualizations of the tagged data. See *output.html* or *output.pdf* in the repository for a trial data.
-
-----
-
-## Usage
-
-Please place the repository(named `vis_tag_data`) in the R's working directory or set the working directory with `setwd()` appropriately.
+* A report generator of different visualizations of the tagged data. See *output.html* or *output.pdf* in the repository for a trial data.
 
 ----
 
 ## Requirements
 
-The code is written in **R**, statistical programming language (R version 3.2.0). Apart from *base* R, we make use of the following packages:
+* [R](http://www.r-project.org/), version 3.2.1
+* [Rstudio](https://www.rstudio.com/products/RStudio/), an IDE for R.  
+(if you are a **R** user, you may choose to do without RStudio)
+* The following packages: `dplyr`,`reshape2`,`ggplot2`,`knitr`,`downloader` and their dependencies.
 
-*dplyr*,*reshape2*, *ggplot2*, *knitr*
+----
 
-If you need to check or install any of the packages, you are suggested to run the following.
+## Usage
 
+* If you are not familiar with **R**:
+    * Download `setup.R` from here. You do not need to download the entire repository.
+    * R assumes that `setup.R` is present in the `working directory`.
+    * To know your working directory, use the command `getwd()`. Then, choose one among the two steps:
+        * You can move `setup.R` file in the working directory manually and run the command `source("setup.R")`.
+        * Set the directory where the `setup.R` file is by `setwd()` and run the command `source("setup.R")`. Example: `setwd("C:/")`
+    * SETUP does the rest. In case of problems, see     *Troubleshooting SETUP* section of this document.
+    
+* If you are a **R** user:
 
-`source("~/vis_tag_data/vistagdata.R")`
-
-`lapply(c("dplyr","reshape2","ggplot2","knitr"),pkgTest)`
-
-If run for the first time, the previous command might take some minutes. Please be patient.
-
-For pdf generation on linux based systems, you might require *pandoc*.
+    * The functions necessary for the program are in `vistagdata.R`.
+    * You may like to setup defaults for *output.Rmd* in the `global options` at the beginning of the file.
 
 ----
 
@@ -66,29 +68,28 @@ Data input format: **csv**
 * The corresponding columns are considered as their tags.
 * All the data is considered as *text*. That is, we do not recognize any data type as say *date*, *number* etc.
 
-For example, see 'taggeddataset.csv' in the repository. We create a R object of the input dataset as follows:
+For example, see 'taggeddataset.csv' in the repository.
 
-<code>inputdata <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")</code>
+<center>**We do not do any post processing on the CSV file.**</center>
 
 ----
 
+
 ## Files in the repository
 
-* **vistagdata.R** -- the code used for recommender system and visualization. You will have to source it to run the recommender system functions.
+* **setup.R** -- SETUP script for those who are familiar with **R**
+
+* **vistagdata.R** -- the code used for recommender system and visualization.
 
 * **output.Rmd** -- code used to generate the html or pdf with the visualizations. This will be processed by *knitr*.
 
-* **taggeddataset.csv** -- the example dataset. The *output.Rmd* uses this name all through. Hence it suggested to name your own dataset as *taggeddataset.csv*.
+* **taggeddataset.csv** -- the example dataset.
 
 Repository contains *output.pdf*, *output.html* which are outputs of the *output.Rmd* on the trial dataset.
 
 ----
 
 ### Recommender system
-
-* Source the **vistagdata.R** using the source() command. For example:
-
-`source('~/vis_tag_data/vistagdata.R')`
 
 * There are four functions.
 
@@ -102,13 +103,9 @@ Repository contains *output.pdf*, *output.html* which are outputs of the *output
 | torecommend | ... recommends objects based on visited tags |
 
 
-* The syntax of the functions are similar. They take the inputdata as the first argument and visited character vector as the second argument. They return a dataframe. For example:
+* The syntax of the functions are similar. They take the *path to csv* as the first argument and visited character vector as the second argument. They return a dataframe. For example:
 
-`inputdata <- read.csv("~/vis_tag_data/taggeddataset.csv",fill=T,colClasses="character")`
-
-`source('~/vis_tag_data/vistagdata.R')`
-
-`View(oorecommend(inputdata,visited=c("bear","monkey")))`
+`View(oorecommend("taggeddataset.csv",visited=c("bear","monkey")))`
 
 
 gives the following output
@@ -125,7 +122,7 @@ gives the following output
 
 ### Tagged data visualization
 
-* On knitting **output.Rmd**, we can produce pdf or html or docx output. Its suggested to use Rstudio IDE for R for easy knitting. Else, try knit() function in R commandline.
+* On knitting **output.Rmd**, we can produce pdf or html or docx output. (look for `knit html` or `knit pdf` button after opening *output.Rmd* in RStudio.)
 
 * These visualizations are generated:
 
@@ -143,6 +140,26 @@ gives the following output
 * 7th and 8th visualizations above use kmeans algorithm that requires the input of number of clusters. We currently employ a crude estimate for this, please try different values and decide the best number.
 
 * By default, the report displays the code too. You may want to put it off by setting 'echo=F' in the *global settings* at the beginning of the *output.Rmd*
+
+----
+
+## Troubleshooting SETUP
+
+The following troubleshooting messages help troubleshooting.
+
+* message: `There is a problem with installing the following package`
+    * Restart R (command: `ctrl+shift+F10` in RStudio) and run the SETUP again. If the problem persists, check your internet connection. Still, if problem persists,  refer 'Troubleshooting SETUP' in README"
+
+* message: `Cannot find the package`
+    * Check your internet connection.
+    
+* message: `Warning message: In download.file(url, method = method, ...) : downloaded length 637284 != reported length 0`
+    * check your internet connection.
+    
+* message: `package xyz was built inder R <versionnumber>`
+    * You are using an older version of R, usually not a problem.
+    
+Beyond, all of these, if the problem persists, write to me: `gmail sri.teach`
 
 ----
 
