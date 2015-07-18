@@ -38,27 +38,25 @@ if(userinput!="y")
 message("----\n* Checking/Installing packages ... it might take a while...") 
 
 # set a working mirror, IIT Chennai
-# r <- getOption("repos")
-# rold <- r
-# r["CRAN"] <- "http://ftp.iitm.ac.in/cran/"
-# options(repos = r)
-# rm(r)
+r <- getOption("repos")
+rold <- r["CRAN"]
+r["CRAN"] <- "http://ftp.iitm.ac.in/cran/"
+options(repos = r)
 
-chkinspkgs(c("dplyr","ggplot2","reshape2","knitr","rmarkdown","downloader","mime", "stringi", "magrittr", "evaluate", "digest", "formatR", "highr", "markdown", "stringr", "yaml"))
+chkinspkgs(c("dplyr","ggplot2","reshape2","knitr","rmarkdown","mime", "stringi", "magrittr", "evaluate", "digest", "formatR", "highr", "markdown", "stringr", "yaml"))
 
-loaddata <- lapply(c("dplyr","ggplot2","reshape2","knitr","rmarkdown","downloader","mime", "stringi", "magrittr", "evaluate", "digest", "formatR", "highr", "markdown", "stringr", "yaml","rmarkdown","knitr"),suppressPackageStartupMessages(require),character.only=T)
-
-# get the zipped repository and set it up
-message("* Downloading repository from github...")
-download("https://github.com/talegari/analyzing-tagged-data/archive/master.zip","atd.zip",quiet=T)
-unzip("atd.zip",exdir=getwd())
-file.remove("atd.zip")
+loaddata <- lapply(c("dplyr","ggplot2","reshape2","knitr","rmarkdown","mime", "stringi", "magrittr", "evaluate", "digest", "formatR", "highr", "markdown", "stringr", "yaml","rmarkdown","knitr"),suppressPackageStartupMessages(require),character.only=T)
 
 message("* Setting 'analyzing-tagged-data-master' as the working directory\n* Loading functions\n ** oorecommend\n ** otrecommend\n ** torecommend\n ** ttrecommend")
 
-setwd(paste(getwd(),"/analyzing-tagged-data-master/",sep=""))
+setwd("analyzing-tagged-data-master/")
 source("vistagdata.R")
 rm(userinput,chkinspkgs,loaddata)
+
+# set the mirror back
+r["CRAN"] <- rold
+options(repos = r)
+rm(r,rold)
 message("**DONE**")
 message("----")
 break}# end of repeat loop

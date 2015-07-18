@@ -3,7 +3,7 @@
 # a function to load necessary packages
 loadpackages <- function()
 {
-  loaddata <- lapply(c("dplyr","ggplot2","reshape2","knitr","rmarkdown","downloader","mime", "stringi", "magrittr", "evaluate", "digest", "formatR", "highr", "markdown", "stringr", "yaml","rmarkdown","knitr"),suppressPackageStartupMessages(require),character.only=T)
+  loaddata <- lapply(c("dplyr","ggplot2","reshape2","knitr","rmarkdown","mime", "stringi", "magrittr", "evaluate", "digest", "formatR", "highr", "markdown", "stringr", "yaml","rmarkdown","knitr"),suppressPackageStartupMessages(require),character.only=T)
   rm(loaddata)
 }
 loadpackages()
