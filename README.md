@@ -46,12 +46,9 @@ We provide,
 ## Usage
 
 * If you are not familiar with **R**:
-    * Download `setup.R` from here. You do not need to download the entire repository.
-    * R assumes that `setup.R` is present in the `working directory`.
-    * To know your working directory, use the command `getwd()`. Then, choose one among the two steps:
-        * You can move `setup.R` file in the working directory manually and run the command `source("setup.R")`.
-        * Set the directory where the `setup.R` file is by `setwd()` and run the command `source("setup.R")`. Example: `setwd("C:/")`
-    * SETUP does the rest. In case of problems, see     *Troubleshooting SETUP* section of this document.
+	* Download the repository from : [https://github.com/talegari/analyzing-tagged-data](https://github.com/talegari/analyzing-tagged-data)
+	* To know your working directory, use the command `getwd()`. Unzip the zip file, as folder `analyzing-tagged-data-master` in the working directory.
+	* Run setup by `source("analyzing-tagged-data-master/setup.R")`. In case of problems, see *Troubleshooting SETUP* section of this document.
     
 * If you are a **R** user:
 
