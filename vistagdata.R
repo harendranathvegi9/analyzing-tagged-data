@@ -55,8 +55,7 @@ hcluster <- function(pathtocsv,toclassify="object",meth="average")
     plot(hcobj, xlab="", sub="")
   }
 
-
-# kmeans clustering takes incdata
+# clustering usingn k means
 kmcluster <- function(pathtocsv,toclassify="object",nc=0,ns=50,elbow=15)
 {
   dat <- pathtocsv %>% incdat(toclassify=toclassify)
@@ -68,23 +67,32 @@ kmcluster <- function(pathtocsv,toclassify="object",nc=0,ns=50,elbow=15)
   if(nc==0)
   {
     
-    ppchange <- function(vec) # pairwise percentage change
+    ppchange <- function(vec) # percentage change
     {
       sapply(2:length(vec),function(x){((vec[x]-vec[x-1])/vec[x-1])*100})
     }
     
     variancefun <-  function(noc) # variance explained by kmeans
     {
-      kmeansobj <- suppressMessages(kmeans(x=as.matrix(dat),centers=noc,nstart=ns))
-      (kmeansobj$betweenss/kmeansobj$totss)*100
-    }
-    
-    varper <- sapply(2:(maxclusters-1),variancefun) %>% ppchange
-    nc <- which(!varper>elbow)[1]
+      out <- tryCatch(
+        {
+          kmeansobj <- suppressMessages(kmeans(x=as.matrix(dat),centers=noc,nstart=ns))
+          (kmeansobj$betweenss/kmeansobj$totss)*100
+        },
+          error=function(cond){return(NA)}
+      ) # end of tryCatch
+    return(out)
+    } # end of variance fun
+
+varper <- sapply(2:maxclusters,variancefun) %>% ppchange
+nc <- ifelse(length(which(!varper>elbow))==0,
+             na.omit(varper) %>% as.numeric %>% length,
+             which(!varper>elbow)[1])
   }
-  
-  suppressMessages(kmeans(x=as.matrix(dat),centers=nc,nstart=ns)) %>% return
+
+suppressMessages(kmeans(x=as.matrix(dat),centers=nc,nstart=10)) %>% return
 }
+
 
 # matrix with number of common tags shared by objects
 # input: takes inclusion df
