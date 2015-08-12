@@ -2,11 +2,26 @@
 
 # a function to load necessary packages
 loadpackages <- function()
-{
+  {
   loaddata <- lapply(c("dplyr","ggplot2","reshape2","knitr","rmarkdown","mime", "stringi", "magrittr", "evaluate", "digest", "formatR", "highr", "markdown", "stringr", "yaml","rmarkdown","knitr"),suppressPackageStartupMessages(require),character.only=T)
   rm(loaddata)
 }
 loadpackages()
+
+# pad a integer vector on left or right to get a desired length
+pad <- function(integerVector,finalLength,padwith=0,side=1)
+  {
+  ifelse(finalLength>length(integerVector),
+         appendLength <- finalLength-length(integerVector),
+         stop('finalLength is not greater than length of integerVector')
+  )
+  
+  ifelse(side==1,
+         returnVector <- c(integerVector,rep(padwith,appendLength)),
+         returnVector <- c(rep(padwith,appendLength),integerVector)
+  )
+  returnVector
+}
 
 # convert wide data to long data format
 
@@ -33,35 +48,64 @@ longdat <- function(pathtocsv,toclassify="object")
   }
 
 # get inclusion matrix from longdata
-incdat <- function(pathtocsv,toclassify="object")
+incdat <- function(pathtocsv,toclassify="object",weights=1)
   {
-    
+    # sanity check on weights
+    # check whether weights are numeric or integer
+    if(class(weights)!='numeric' & class(weights)!='integer')
+        {stop('class of weights vector should be either numeric or integer')}
+    # checks whether the weights are non-negative
+    if(any(weights<0))
+        {stop('weights should be non-negative')}
+  
     dat <- pathtocsv %>% longdat
     # get inclusion df based on 'toclassify'
-    ifelse(toclassify=="object",incd <- dcast(dat,object~tag),incd <- dcast(dat,tag~object))
+    ifelse(toclassify=="object",
+           incd <- dcast(dat,object~tag),
+           incd <- dcast(dat,tag~object)
+           )
     incd[is.na(incd)] <- 0         # set NA's to 0
-    rownames(incd) <- incd[,1]     # set first column as rownames
+    rowNames <- incd[,1]     
     incd <- incd[,-1]              # and delete it
-    return(incd)
+    
+    # set 'num' to length of number of tags/objects
+    if(toclassify=='object')
+          {
+            # set length of tags
+            num <- subset(dat[,2],dat[,2]!='') %>% unique %>% length
+          }
+    else
+          {
+            # set length of objects
+            num <- subset(dat[,1],dat[,1]!='') %>% unique %>% length
+          }
+    
+    # pad the weights
+    w <- pad(integerVector=weights,finalLength=num,padwith=1)
+    
+    # inclusion matrix with weights
+    incd <- apply(as.matrix(incd),1,function(x){x*w}) %>% t
+    rownames(incd) <- rowNames
+    incd
   }
 
 # hcluster takes incdata
-hcluster <- function(pathtocsv,toclassify="object",meth="average")
+hcluster <- function(pathtocsv,toclassify="object",meth="average",weights=1)
   { 
-    dat <- pathtocsv %>% incdat(toclassify=toclassify)
+    dat <- pathtocsv %>% incdat(toclassify=toclassify,weights=weights)
   
     hcobj <- hclust(dist(dat,method="manhattan"),method=meth)
     par(mar=c(0, 2, 2, 0)) # c(bottom, left, top, right)
     plot(hcobj, xlab="", sub="")
   }
 
-# clustering usingn k means
-kmcluster <- function(pathtocsv,toclassify="object",nc=0,ns=50,elbow=15)
-{
-  dat <- pathtocsv %>% incdat(toclassify=toclassify)
+# clustering using k means
+kmcluster <- function(pathtocsv,toclassify="object",nc=0,ns=50,elbow=15,weights=1)
+  {
+  dat <- pathtocsv %>% incdat(toclassify=toclassify,weights=weights)
   
   ifelse(toclassify=="object",
-         maxclusters <- read.csv(pathtocsv,fill=T,colClasses="character") %>% colnames %>% length, 
+         maxclusters <- longdat(pathtocsv)[,1] %>% unique %>% length, 
          maxclusters <- longdat(pathtocsv)[,2] %>% unique %>% length)
   
   if(nc==0)
@@ -88,36 +132,36 @@ varper <- sapply(2:maxclusters,variancefun) %>% ppchange
 nc <- ifelse(length(which(!varper>elbow))==0,
              na.omit(varper) %>% as.numeric %>% length,
              which(!varper>elbow)[1])
-  }
+  } # end of if when nc is 0
 
 suppressMessages(kmeans(x=as.matrix(dat),centers=nc,nstart=10)) %>% return
 }
 
-
 # matrix with number of common tags shared by objects
-# input: takes inclusion df
 sharedtable <- function(pathtocsv,toclassify="object")
 {
   dat <- pathtocsv %>% incdat(toclassify=toclassify)
-  
-  dim(dat)[2]-as.matrix(dist(dat,method="manhattan")) %>% return
+  dim(dat)[2]-as.matrix(dist(dat)) %>% return
 }
 
 # a tiny recommender system based on tagged data
 
 # recommend objects based on objects
-oorecommend <- function(pathtocsv,visited)
+oorecommend <- function(pathtocsv,visited,weights=1)
 { 
   dat <- read.csv(pathtocsv,fill=T,colClasses="character")
-  objects <- tolower(colnames(dat))
-  visited <- objects[objects %in% tolower(visited)]
+  objects <- longdat(pathtocsv)[,1] %>% unique %>% tolower
+
   # removed visits not in objects
+  visited <- objects[objects %in% tolower(visited)]
   
-  if(length(visited)==0){stop("Invalid or NULL 'visited' data")}
-  if(length(visited)==length(objects)){stop("All objects are 'visited': No recommendations")}
+  # sanity check on 'visited'
+  if(length(visited)==0)
+    {stop("Invalid or NULL 'visited' data")}
+  if(length(visited)==length(objects))
+    {stop("All objects are 'visited': No recommendations")}
   
-  inc <- incdat(pathtocsv)
-  
+  inc <- incdat(pathtocsv,weights=weights)
   visitedinc <- subset(inc,rownames(inc) %in% visited)
   visitedincvector <- apply(visitedinc,2,mean)
   newinc <- t(inc)[,objects[objects %in% visited==F]] %>% t
@@ -133,18 +177,20 @@ oorecommend <- function(pathtocsv,visited)
 }
 
 # recommend tags based on tags
-ttrecommend <- function(pathtocsv,visited)
+ttrecommend <- function(pathtocsv,visited,weights=1)
 {
   dat <- read.csv(pathtocsv,fill=T,colClasses="character")
-  tags <- tolower(as.character(unique(longdat(pathtocsv)[,2])))
+  tags <- longdat(pathtocsv)[,2] %>% unique %>% tolower
+  # remove visits not in tags
   visited <- tags[tags %in% tolower(visited)] 
-  # removed visits not in tags
-
-  # handling special cases
-  if(length(visited)==0){stop("Invalid or NULL 'visited' data")}
-  if(length(visited)==length(tags)){stop("All tags/objects are 'visited': No recommendations")}
   
-  inc <- incdat(pathtocsv,toclassify="tag")
+  # handling special cases
+  if(length(visited)==0)
+    {stop("Invalid or NULL 'visited' data")}
+  if(length(visited)==length(tags))
+    {stop("All tags/objects are 'visited': No recommendations")}
+  
+  inc <- incdat(pathtocsv,toclassify="tag",weights=weights)
   visitedinc <- subset(inc,rownames(inc) %in% visited)
   visitedincvector <- apply(visitedinc,2,mean)
   newinc <- t(t(inc)[,tags[tags %in% visited==F]])
@@ -161,20 +207,18 @@ ttrecommend <- function(pathtocsv,visited)
 otrecommend <- function(pathtocsv,visited)
 {
   dat <- read.csv(pathtocsv,fill=T,colClasses="character")
-  objects <- tolower(colnames(dat))
-  tags <- tolower(as.character(unique(longdat(pathtocsv)[,2])))
-  
+  objects <- longdat(pathtocsv)[,1] %>% unique %>% tolower
+  tags <- longdat(pathtocsv)[,2] %>% unique %>% tolower
   # remove visits not in objects
   visited <- objects[objects %in% tolower(visited)]
   
   # handling special cases
-  if(length(visited)==0){stop("Invalid or NULL 'visited' data")}
-  if(length(visited)==length(tags)){stop("All objects/tags are visited : No recommendations.")}
+  if(length(visited)==0)
+    {stop("Invalid or NULL 'visited' data")}
+  if(length(visited)==length(objects))
+    {stop("All objects/tags are visited : No recommendations.")}
   
   tagsvector <- as.vector(as.matrix(dat[,visited]))
-  # remove "" from tagsvector
-  tagsvector <- tagsvector[tagsvector!=""]
-  
   df <- data.frame(table(tagsvector))
   colnames(df) <- c("tag","frequency")
   df <- df[order(df$frequency,df$tag,decreasing=T),]
@@ -186,14 +230,15 @@ otrecommend <- function(pathtocsv,visited)
 torecommend <- function(pathtocsv,visited)
 {
   dat <- read.csv(pathtocsv,fill=T,colClasses="character")
-  tags <- tolower(as.character(unique(longdat(pathtocsv)[,2])))
-  visited <- tags[tags %in% tolower(visited)] 
-  # removed visits not in tags
-  
+  tags <- longdat(pathtocsv)[,2] %>% unique %>% tolower
+  # remove visits not in tags
+  visited <- tags[tags %in% tolower(visited)]
   
   # handling special cases
-  if(length(visited)==0){stop("Invalid or NULL 'visited' data")}
-  if(length(visited)==length(tags)){stop("All objects/tags are visited: No recommendations")}
+  if(length(visited)==0)
+    {stop("Invalid or NULL 'visited' data")}
+  if(length(visited)==length(tags))
+    {stop("All objects/tags are visited: No recommendations")}
   
   objectsvector <- subset(longdat(pathtocsv)$object,longdat(pathtocsv)$tag %in% visited)
   
