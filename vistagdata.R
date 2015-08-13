@@ -10,16 +10,23 @@ loadpackages()
 
 # pad a integer vector on left or right to get a desired length
 pad <- function(integerVector,finalLength,padwith=0,side=1)
-  {
-  ifelse(finalLength>length(integerVector),
+{
+  ifelse(finalLength>=length(integerVector),
          appendLength <- finalLength-length(integerVector),
-         stop('finalLength is not greater than length of integerVector')
+         stop('finalLength is smaller than length of integerVector')
   )
   
-  ifelse(side==1,
-         returnVector <- c(integerVector,rep(padwith,appendLength)),
-         returnVector <- c(rep(padwith,appendLength),integerVector)
-  )
+  if(appendLength>0)
+  {
+    ifelse(side==1,
+           returnVector <- c(integerVector,rep(padwith,appendLength)),
+           returnVector <- c(rep(padwith,appendLength),integerVector)
+    )
+  }
+  else
+  {
+    returnVector <- integerVector    
+  }
   returnVector
 }
 

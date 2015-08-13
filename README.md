@@ -90,8 +90,6 @@ Repository contains *output.pdf*, *output.html* which are outputs of the *output
 
 * There are four functions.
 
-
-
 |   Function  |                     task                     |
 |:-----------:|:--------------------------------------------:|
 | oorecommend | ... recommends  objects based on visited objects |
@@ -114,6 +112,21 @@ gives the following output
 | 3 | dog      |               38 |
 | 4 | fish     |               38 |
 | 5 | cat      |               29 |
+
+----
+
+### Using 'weight'ed versions
+
+**(Added in version 1.1)**:
+A new optional argument *weights* is added some functions. We want to emphasize some tags/objects by *weighing* them more as compared to other tags/objects.
+
+Consider 
+`kmcluster("taggeddataset.csv",weights=c(3))`
+
+It ends up putting `cat` and `tiger` in the same cluster(as opposed to the default `kmcluster("taggeddataset.csv")` where `cat` and `tiger` were in different clusters). The *weights* are associated with the tags(totally 12 in this example) of the data. We give a weight of 3 to the first tag(which happens to be `claw`) and a default of 1 to the rest of the tags(1 is automatically padded at the end). As only `cat` and `tiger` share the common tag `claw`, the higher *weight* for `claw` over weighs other dissimilarities and puts them in the same cluster.
+
+These functions have the optional `weights` argument (defaults to equal weights): `incdat`, `hcluster`, `kmcluster`, `oorecommend`, `ttrecommend`
+
 
 ----
 

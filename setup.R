@@ -13,8 +13,8 @@ chkinspkgs <- function(packagevector)
       # check again
       if (package %in% existingpackages==F)
       {
-        stop("* There is a problem with installing the following package. Restart R (command: ctrl+shift+F10 in RStudio) and run the SETUP again. If the problem persists, check your internet connection. Still, if problem persists,  refer 'Troubleshooting SETUP' in README")
-        print(as.character(package))
+        message("* There is a problem with installing the following package. Restart R (command: ctrl+shift+F10 in RStudio) and run the SETUP again. If the problem persists, check your internet connection. Still, if problem persists,  refer 'Troubleshooting SETUP' in README")
+        message(as.character(package))
         break
       }
       # check is over
@@ -47,10 +47,10 @@ chkinspkgs(c("dplyr","ggplot2","reshape2","knitr","rmarkdown","mime", "stringi",
 
 loaddata <- lapply(c("dplyr","ggplot2","reshape2","knitr","rmarkdown","mime", "stringi", "magrittr", "evaluate", "digest", "formatR", "highr", "markdown", "stringr", "yaml","rmarkdown","knitr"),suppressPackageStartupMessages(require),character.only=T)
 
-message("* Setting 'analyzing-tagged-data-master' as the working directory\n* Loading functions\n ** oorecommend\n ** otrecommend\n ** torecommend\n ** ttrecommend")
+message("* Setting 'analyzing-tagged-data-master' as the working directory\n* Loading functions\n **pad\n ** longdat\n **incdat\n **hcluster\n **kmcluster\n **sharedtable\n ** oorecommend\n ** otrecommend\n ** torecommend\n ** ttrecommend")
 
 setwd("analyzing-tagged-data-master/")
-source("vistagdata.R")
+suppressMessages(source("vistagdata.R"))
 rm(userinput,chkinspkgs,loaddata)
 
 # set the mirror back
